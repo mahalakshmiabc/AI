@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aegis AI - Student Dropout Risk Prediction & Early Intervention</title>
+  <link rel="stylesheet" href="index.css">
+  <!-- FontAwesome for Premium Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div>
+        <div class="brand-container">
+          <div class="brand-icon">
+            <i class="fa-solid fa-shield-halved text-white"></i>
+          </div>
+          <div>
+            <div class="brand-name">AEGIS AI</div>
+            <div class="brand-subtitle">Student Care</div>
+          </div>
+        </div>
+
+        <nav class="nav-menu">
+          <a href="#dashboard" class="nav-item active" id="nav-dashboard">
+            <i class="fa-solid fa-chart-pie"></i>
+            <span>Dashboard</span>
+          </a>
+          <a href="#students" class="nav-item" id="nav-students">
+            <i class="fa-solid fa-user-graduate"></i>
+            <span>Students</span>
+          </a>
+          <a href="#interventions" class="nav-item" id="nav-interventions">
+            <i class="fa-solid fa-hand-holding-hand"></i>
+            <span>Interventions</span>
+          </a>
+          <a href="#analytics" class="nav-item" id="nav-analytics">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>Analytics</span>
+          </a>
+          <a href="#settings" class="nav-item" id="nav-settings">
+            <i class="fa-solid fa-sliders"></i>
+            <span>Model Config</span>
+          </a>
+        </nav>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="user-avatar">AD</div>
+        <div class="user-info">
+          <div class="user-name">Dr. Arthur Dent</div>
+          <div class="user-role">Lead Counselor</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- HEADER -->
+      <header class="content-header">
+        <div class="header-title-container">
+          <h1 id="page-title">Dashboard Overview</h1>
+          <p id="page-subtitle">Real-time risk metrics and critical student indicators.</p>
+        </div>
+        
+        <div class="header-actions">
+          <div class="search-input-wrapper">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="global-search" class="form-control" placeholder="Search students by name or ID...">
+          </div>
+          <button class="btn btn-secondary btn-sm" id="btn-refresh-data">
+            <i class="fa-solid fa-arrows-rotate"></i> Refresh
+          </button>
+        </div>
+      </header>
+
+      <!-- ============================================== -->
+      <!-- VIEW: DASHBOARD (Active by default) -->
+      <!-- ============================================== -->
+      <section id="view-dashboard" class="view-section active">
+        
+        <!-- Summary Cards -->
+        <div class="summary-grid">
+          <div class="glass-card summary-card accent-low">
+            <div class="summary-icon"><i class="fa-solid fa-users"></i></div>
+            <div class="summary-info">
+              <span class="summary-val" id="stat-total-students">--</span>
+              <span class="summary-lbl">Total Monitored</span>
+            </div>
+          </div>
+          <div class="glass-card summary-card accent-critical">
+            <div class="summary-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+            <div class="summary-info">
+              <span class="summary-val" id="stat-critical-count">--</span>
+              <span class="summary-lbl">Critical Risk</span>
+            </div>
+          </div>
+          <div class="glass-card summary-card accent-high">
+            <div class="summary-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div class="summary-info">
+              <span class="summary-val" id="stat-high-count">--</span>
+              <span class="summary-lbl">High Risk</span>
+            </div>
+          </div>
+          <div class="glass-card summary-card accent-moderate">
+            <div class="summary-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+            <div class="summary-info">
+              <span class="summary-val" id="stat-active-interventions">--</span>
+              <span class="summary-lbl">Interventions</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Dashboard Layout -->
+        <div class="dashboard-grid">
+          <!-- Donut chart: Risk Distribution -->
+          <div class="glass-card col-4">
+            <div class="panel-header">
+              <h2>Risk Tier Distribution</h2>
+            </div>
+            <div class="chart-container">
+              <canvas id="chart-risk-dist"></canvas>
+            </div>
+          </div>
+
+          <!-- Line chart: Historical trends -->
+          <div class="glass-card col-8">
+            <div class="panel-header">
+              <h2>Aegis AI Dropout Index Trend</h2>
+              <p class="subtitle">Average monthly risk score tracking</p>
+            </div>
+            <div class="chart-container">
+              <canvas id="chart-index-trend"></canvas>
+            </div>
+          </div>
+
+          <!-- Alerts panel -->
+          <div class="glass-card col-5">
+            <div class="panel-header">
+              <h2>Critical Risk Alerts</h2>
+              <i class="fa-solid fa-bell text-red-500 animate-pulse"></i>
+            </div>
+            <div class="alerts-list" id="dashboard-alerts-list">
+              <!-- Dynamically populated critical/high risk notifications -->
+            </div>
+          </div>
+
+          <!-- Quick Actions & Recent Interventions -->
+          <div class="glass-card col-7">
+            <div class="panel-header">
+              <h2>Recent Counselor Outreaches</h2>
+              <button class="btn btn-secondary btn-sm" id="btn-view-all-interventions">View All</button>
+            </div>
+            <div class="table-responsive">
+              <table class="custom-table" id="dashboard-recent-interventions-table">
+                <thead>
+                  <tr>
+                    <th>Student</th>
+                    <th>Type</th>
+                    <th>Counselor</th>
+                    <th>Status</th>
+                    <th>Progress</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ============================================== -->
+      <!-- VIEW: STUDENTS -->
+      <!-- ============================================== -->
+      <section id="view-students" class="view-section">
+        <div class="glass-card" style="margin-bottom: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+          <div style="flex-grow: 1; display: flex; gap: 1rem; flex-wrap: wrap;">
+            <select class="select-control" id="filter-risk">
+              <option value="all">All Risk Tiers</option>
+              <option value="Critical">Critical Only</option>
+              <option value="High">High</option>
+              <option value="Moderate">Moderate</option>
+              <option value="Low">Low</option>
+            </select>
+
+            <select class="select-control" id="filter-department">
+              <option value="all">All Departments</option>
+              <option value="Computer Science">Computer Science</option>
+              <option value="Mechanical Engineering">Mechanical Engineering</option>
+              <option value="Business Administration">Business Administration</option>
+              <option value="Psychology">Psychology</option>
+              <option value="Biology">Biology</option>
+            </select>
+
+            <select class="select-control" id="filter-grade">
+              <option value="all">All Years (1st - 4th)</option>
+              <option value="1">1st Year</option>
+              <option value="2">2nd Year</option>
+              <option value="3">3rd Year</option>
+              <option value="4">4th Year</option>
+            </select>
+          </div>
+
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="btn btn-secondary" id="btn-reset-filters">Reset Filters</button>
+          </div>
+        </div>
+
+        <div class="glass-card">
+          <div class="table-responsive">
+            <table class="custom-table" id="students-main-table">
+              <thead>
+                <tr>
+                  <th>Student Name</th>
+                  <th>ID</th>
+                  <th>Department</th>
+                  <th>GPA</th>
+                  <th>Attendance</th>
+                  <th>Risk Level</th>
+                  <th>6-Month Trend</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="students-table-body">
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- VIEW: INTERVENTIONS -->
+      <!-- ============================================== -->
+      <section id="view-interventions" class="view-section">
+        
+        <div class="glass-card" style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h2 style="font-family: var(--font-heading); font-size: 1.1rem; font-weight:600; margin-bottom: 0.25rem;">Early Intervention Dashboard</h2>
+            <p style="color: var(--text-secondary); font-size: 0.8rem;">Track, manage, and complete active academic and supportive action plans.</p>
+          </div>
+          <button class="btn btn-primary btn-sm" id="btn-assign-intervention-manual">
+            <i class="fa-solid fa-plus"></i> Launch Intervention
+          </button>
+        </div>
+
+        <div class="interventions-board" id="interventions-container">
+          <!-- Populated dynamically with int-cards -->
+        </div>
+
+      </section>
+
+      <!-- ============================================== -->
+      <!-- VIEW: ANALYTICS -->
+      <!-- ============================================== -->
+      <section id="view-analytics" class="view-section">
+        
+        <div class="dashboard-grid">
+          
+          <!-- Heatmap Card -->
+          <div class="glass-card col-12">
+            <div class="panel-header">
+              <h2>Department Risk Risk-Matrix Heatmap</h2>
+              <p class="subtitle">Normalized score correlation cross-referencing departments and support pillars</p>
+            </div>
+            <div class="chart-container large">
+              <canvas id="chart-analytics-heatmap"></canvas>
+            </div>
+          </div>
+
+          <!-- Scatter plot: Risk vs GPA -->
+          <div class="glass-card col-6">
+            <div class="panel-header">
+              <h2>Dropout Risk vs. Cumulative GPA</h2>
+              <p class="subtitle">Scatter correlation mapping student performance (GPA) against risk</p>
+            </div>
+            <div class="chart-container">
+              <canvas id="chart-analytics-scatter"></canvas>
+            </div>
+          </div>
+
+          <!-- Bar chart: Intervention Effectiveness -->
+          <div class="glass-card col-6">
+            <div class="panel-header">
+              <h2>Intervention Success Rates</h2>
+              <p class="subtitle">Historical performance rating effectiveness across programs</p>
+            </div>
+            <div class="chart-container">
+              <canvas id="chart-analytics-success-rate"></canvas>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ============================================== -->
+      <!-- VIEW: SETTINGS -->
+      <!-- ============================================== -->
+      <section id="view-settings" class="view-section">
+        
+        <div class="settings-grid">
+          
+          <!-- Weights adjustments -->
+          <div class="glass-card">
+            <div class="panel-header" style="border-bottom: 1px solid var(--glass-border); padding-bottom: 0.75rem; margin-bottom: 1.5rem;">
+              <h2>Aegis AI Predictor Feature Weights</h2>
+            </div>
+            
+            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1.5rem; line-height: 1.4;">
+              Adjust the feature weights below to customize how the prediction algorithm evaluates risk factors. Total weight sums dynamically to normalize student calculations.
+            </p>
+
+            <div class="weight-item">
+              <div class="weight-header">
+                <span class="weight-title">GPA Trend Weight</span>
+                <span class="weight-val" id="lbl-weight-gpaTrend">--</span>
+              </div>
+              <input type="range" class="range-slider font-weight-slider" id="slide-weight-gpaTrend" min="0" max="100">
+            </div>
+
+            <div class="weight-item">
+              <div class="weight-header">
+                <span class="weight-title">Attendance Rate Weight</span>
+                <span class="weight-val" id="lbl-weight-attendance">--</span>
+              </div>
+              <input type="range" class="range-slider font-weight-slider" id="slide-weight-attendance" min="0" max="100">
+            </div>
+
+            <div class="weight-item">
+              <div class="weight-header">
+                <span class="weight-title">Assignment Compliance Weight</span>
+                <span class="weight-val" id="lbl-weight-assignmentSubmission">--</span>
+              </div>
+              <input type="range" class="range-slider font-weight-slider" id="slide-weight-assignmentSubmission" min="0" max="100">
+            </div>
+
+            <div class="weight-item">
+              <div class="weight-header">
+                <span class="weight-title">LMS Engagement Weight</span>
+                <span class="weight-val" id="lbl-weight-lmsEngagement">--</span>
+              </div>
+              <input type="range" class="range-slider font-weight-slider" id="slide-weight-lmsEngagement" min="0" max="100">
+            </div>
+
+            <div class="weight-item">
+              <div class="weight-header">
+                <span class="weight-title">Disciplinary/Behavioral weight</span>
+                <span class="weight-val" id="lbl-weight-behavioralIncidents">--</span>
+              </div>
+              <input type="range" class="range-slider font-weight-slider" id="slide-weight-behavioralIncidents" min="0" max="100">
+            </div>
+
+            <div class="weight-item">
+              <div class="weight-header">
+                <span class="weight-title">Financial Hardship Weight</span>
+                <span class="weight-val" id="lbl-weight-financialStress">--</span>
+              </div>
+              <input type="range" class="range-slider font-weight-slider" id="slide-weight-financialStress" min="0" max="100">
+            </div>
+
+            <div class="weight-item">
+              <div class="weight-header">
+                <span class="weight-title">Campus Social Integration Weight</span>
+                <span class="weight-val" id="lbl-weight-socialIntegration">--</span>
+              </div>
+              <input type="range" class="range-slider font-weight-slider" id="slide-weight-socialIntegration" min="0" max="100">
+            </div>
+
+            <div class="weight-item">
+              <div class="weight-header">
+                <span class="weight-title">Family Support Level Weight</span>
+                <span class="weight-val" id="lbl-weight-familySupport">--</span>
+              </div>
+              <input type="range" class="range-slider font-weight-slider" id="slide-weight-familySupport" min="0" max="100">
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+              <button class="btn btn-primary" id="btn-save-weights">Apply New Weights</button>
+              <button class="btn btn-secondary" id="btn-reset-weights">Reset Default</button>
+            </div>
+          </div>
+
+          <!-- Risk Boundaries Config & System Settings -->
+          <div style="display: flex; flex-direction: column; gap: 2rem;">
+            <div class="glass-card">
+              <div class="panel-header" style="border-bottom: 1px solid var(--glass-border); padding-bottom: 0.75rem; margin-bottom: 1.5rem;">
+                <h2>Model Risk Tier Thresholds</h2>
+              </div>
+              
+              <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1.5rem; line-height: 1.4;">
+                Fine-tune risk categorizations. Adjusting these boundaries changes how students are classified into Low, Moderate, High, and Critical tiers globally.
+              </p>
+
+              <div class="weight-item">
+                <div class="weight-header">
+                  <span class="weight-title">Moderate Risk Level Boundary</span>
+                  <span class="weight-val" id="lbl-thresh-moderate">--</span>
+                </div>
+                <input type="range" class="range-slider threshold-slider" id="slide-thresh-moderate" min="10" max="40">
+              </div>
+
+              <div class="weight-item">
+                <div class="weight-header">
+                  <span class="weight-title">High Risk Level Boundary</span>
+                  <span class="weight-val" id="lbl-thresh-high">--</span>
+                </div>
+                <input type="range" class="range-slider threshold-slider" id="slide-thresh-high" min="41" max="70">
+              </div>
+
+              <div class="weight-item">
+                <div class="weight-header">
+                  <span class="weight-title">Critical Risk Level Boundary</span>
+                  <span class="weight-val" id="lbl-thresh-critical">--</span>
+                </div>
+                <input type="range" class="range-slider threshold-slider" id="slide-thresh-critical" min="71" max="95">
+              </div>
+
+              <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button class="btn btn-primary" id="btn-save-thresholds">Save Thresholds</button>
+              </div>
+            </div>
+
+            <div class="glass-card">
+              <div class="panel-header" style="border-bottom: 1px solid var(--glass-border); padding-bottom: 0.75rem; margin-bottom: 1.5rem;">
+                <h2>Simulation Control Center</h2>
+              </div>
+              
+              <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem; line-height: 1.4;">
+                Trigger simulated anomalies, semester grade shifts, or randomize student characteristics to test early interventions.
+              </p>
+
+              <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <button class="btn btn-secondary" id="btn-sim-anomalies" style="width: 100%; justify-content: flex-start;">
+                  <i class="fa-solid fa-bolt text-amber-500"></i> Simulate Midterm Attendance Drop
+                </button>
+                <button class="btn btn-secondary" id="btn-sim-intervention-boost" style="width: 100%; justify-content: flex-start;">
+                  <i class="fa-solid fa-graduation-cap text-green-500"></i> Boost All Intervention Progress (+20%)
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: STUDENT DETAILS & PROFILE DRAW -->
+  <!-- ============================================== -->
+  <div class="modal-overlay" id="student-detail-modal">
+    <div class="modal-container">
+      <div class="modal-close" onclick="closeStudentModal()">
+        <i class="fa-solid fa-xmark"></i>
+      </div>
+      
+      <div class="student-profile-header">
+        <div class="student-meta-block">
+          <div class="student-large-avatar" id="modal-avatar">--</div>
+          <div class="student-name-tier">
+            <h2 id="modal-student-name">Student Name</h2>
+            <div class="student-sub-details">
+              <span id="modal-student-id"><i class="fa-solid fa-id-card"></i> --</span>
+              <span id="modal-student-dept"><i class="fa-solid fa-building"></i> --</span>
+              <span id="modal-student-grade"><i class="fa-solid fa-calendar"></i> Year 1</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Risk Gauge -->
+        <div class="risk-gauge-container">
+          <div class="circular-gauge">
+            <svg>
+              <circle class="bg-ring" cx="55" cy="55" r="45"></circle>
+              <circle class="active-ring" id="modal-gauge-ring" cx="55" cy="55" r="45"></circle>
+            </svg>
+            <div class="gauge-percentage">
+              <span class="gauge-val" id="modal-gauge-value">0%</span>
+              <span class="gauge-lbl" id="modal-gauge-tier">Tier</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-grid">
+        <!-- Explanations & Protective Factors -->
+        <div class="col-7">
+          <div class="panel-header" style="margin-bottom: 1rem;">
+            <h2>AI Attribution Model (Risk Drivers)</h2>
+          </div>
+          
+          <div class="feature-score-list" id="modal-explainability-list">
+            <!-- Dynamically populated SHAP factors -->
+          </div>
+        </div>
+
+        <!-- Metrics Overview & Recommendations -->
+        <div class="col-5" style="display: flex; flex-direction: column; gap: 1.5rem;">
+          <div>
+            <div class="panel-header" style="margin-bottom: 0.75rem;">
+              <h2>Student Vital Statistics</h2>
+            </div>
+            
+            <div class="metric-blocks-grid">
+              <div class="metric-block">
+                <div class="metric-block-label">GPA</div>
+                <div class="metric-block-value" id="modal-vital-gpa">--</div>
+              </div>
+              <div class="metric-block">
+                <div class="metric-block-label">Attendance</div>
+                <div class="metric-block-value" id="modal-vital-attendance">--</div>
+              </div>
+              <div class="metric-block">
+                <div class="metric-block-label">LMS Activity</div>
+                <div class="metric-block-value" id="modal-vital-lms">--</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="panel-header" style="margin-bottom: 0.75rem;">
+              <h2>Model Recommendations</h2>
+            </div>
+            <div class="rec-list" id="modal-recommendations-list">
+              <!-- Dynamically populated early action recommendations -->
+            </div>
+          </div>
+
+          <!-- Log and manual interventions -->
+          <div>
+            <div class="panel-header" style="margin-bottom: 0.75rem;">
+              <h2>Active Interventions</h2>
+            </div>
+            <div id="modal-active-interventions-list">
+              <!-- Active interventions log -->
+            </div>
+            <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+              <button class="btn btn-primary btn-sm" id="modal-btn-assign-intervention" style="width: 100%;">
+                <i class="fa-solid fa-plus"></i> Assign Plan
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: MANUAL INTERVENTION LAUNCHER -->
+  <!-- ============================================== -->
+  <div class="modal-overlay" id="intervention-assignment-modal">
+    <div class="modal-container" style="max-width: 480px;">
+      <div class="modal-close" onclick="closeInterventionModal()">
+        <i class="fa-solid fa-xmark"></i>
+      </div>
+      
+      <h2 style="font-family: var(--font-heading); font-size: 1.35rem; font-weight: 700; margin-bottom: 1.5rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.75rem;">
+        Launch Care Intervention
+      </h2>
+
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        <div>
+          <label style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 0.35rem;">Select Target Student</label>
+          <select class="select-control" id="form-int-student" style="width: 100%;">
+            <!-- Loaded dynamically with at risk students -->
+          </select>
+        </div>
+
+        <div>
+          <label style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 0.35rem;">Intervention Program Type</label>
+          <select class="select-control" id="form-int-type" style="width: 100%;">
+            <option value="Academic Tutoring">Academic Tutoring (Subject Coaching)</option>
+            <option value="Mentorship Program">Campus Peer Mentorship</option>
+            <option value="Financial Counseling">Emergency Financial Counseling</option>
+            <option value="Wellness Counseling">Mental Health / Wellness Counseling</option>
+            <option value="Parent Outreach">Family Engagement Outreach</option>
+          </select>
+        </div>
+
+        <div>
+          <label style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 0.35rem;">Assigned Counselor</label>
+          <select class="select-control" id="form-int-counselor" style="width: 100%;">
+            <option value="Dr. Sarah Jenkins">Dr. Sarah Jenkins (Wellness Dept)</option>
+            <option value="Marcus Vance">Marcus Vance (Advising Lead)</option>
+            <option value="Elena Rostova">Elena Rostova (Financial Assistance)</option>
+            <option value="Principal Thomas">Principal Thomas (Student Dean)</option>
+          </select>
+        </div>
+
+        <div>
+          <label style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 0.35rem;">Notes & Targets</label>
+          <textarea class="form-control" id="form-int-notes" style="width: 100%; height: 80px; padding: 0.5rem; font-family: var(--font-sans);" placeholder="Enter specific academic milestone targets or meeting times..."></textarea>
+        </div>
+
+        <button class="btn btn-primary" id="btn-submit-intervention" style="margin-top: 1rem;">
+          <i class="fa-solid fa-paper-plane"></i> Initialize Early Intervention Plan
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <!-- ============================================== -->
+  <div class="toast toast-success" id="notification-toast">
+    <i class="fa-solid fa-circle-check"></i>
+    <span class="toast-text" id="notification-text">Intervention assigned successfully!</span>
+  </div>
+
+  <!-- Scripts -->
+  <script src="data.js"></script>
+  <script src="prediction.js"></script>
+  <script src="charts.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
